@@ -20,8 +20,7 @@ import type { NodeCatalogEntry } from "@/lib/comfy/objectInfo"
 import { buildWidgetDefaults } from "@/lib/comfy/widget-defaults"
 
 export function ComfyFlowCanvas() {
-  const { open: commandOpen, setOpen: setCommandOpen } =
-    useCommandPaletteOpen()
+  const { open: commandOpen, setOpen: setCommandOpen } = useCommandPaletteOpen()
   const {
     nodeDefs,
     nodeSchemas,

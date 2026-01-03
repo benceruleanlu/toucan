@@ -123,7 +123,10 @@ export function ComfyNode({ data, id }: NodeProps<ComfyFlowNode>) {
         {inputSlotsWithWidgets.length > 0 ? (
           <div className="flex flex-col gap-3">
             {inputSlotsWithWidgets.map(({ slot, displayName, widget }) => (
-              <div key={`widget-${slot.name}`} className="flex flex-col gap-1.5">
+              <div
+                key={`widget-${slot.name}`}
+                className="flex flex-col gap-1.5"
+              >
                 <div className="relative flex min-h-5 items-center">
                   <Handle
                     type="target"

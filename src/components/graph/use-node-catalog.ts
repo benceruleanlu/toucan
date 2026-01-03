@@ -45,7 +45,10 @@ export const useNodeCatalog = (): NodeCatalogState => {
         setNodeSchemas(normalized)
         setNodeDefs(catalog)
       } catch (fetchError) {
-        if (fetchError instanceof DOMException && fetchError.name === "AbortError") {
+        if (
+          fetchError instanceof DOMException &&
+          fetchError.name === "AbortError"
+        ) {
           return
         }
         setError(
