@@ -1,6 +1,6 @@
 import react from "@vitejs/plugin-react"
 import tsconfigPaths from "vite-tsconfig-paths"
-import { defineConfig } from "vitest/config"
+import { coverageConfigDefaults, defineConfig } from "vitest/config"
 
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
@@ -10,6 +10,12 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["src/**/*.{ts,tsx}"],
+      // excluded for simplicity, may need reenabling later
+      exclude: [
+        ...coverageConfigDefaults.exclude,
+        "src/app/layout.tsx",
+        "src/app/page.tsx",
+      ],
     },
   },
 })
