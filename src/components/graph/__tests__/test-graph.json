@@ -1,230 +1,230 @@
 {
-    "version": 1,
-    "savedAt": "2026-01-03T09:40:46.649Z",
-    "graph": {
-        "nodes": [
-            {
-                "id": "0b93022c-571d-47ea-b82a-b17fd9006bf9",
-                "type": "comfy",
-                "position": {
-                    "x": 524,
-                    "y": 586.5
-                },
-                "data": {
-                    "label": "CLIP Text Encode (Prompt)",
-                    "nodeType": "CLIPTextEncode",
-                    "widgetValues": {
-                        "text": "galaxy in a bottle"
-                    }
-                },
-                "measured": {
-                    "width": 202,
-                    "height": 179
-                },
-                "selected": false,
-                "dragging": false
-            },
-            {
-                "id": "55d8cd1d-1abc-40d1-a3f1-1013cea18c56",
-                "type": "comfy",
-                "position": {
-                    "x": 812.7500000000001,
-                    "y": 467.75
-                },
-                "data": {
-                    "label": "KSampler",
-                    "nodeType": "KSampler",
-                    "widgetValues": {
-                        "seed": 3,
-                        "steps": 20,
-                        "cfg": 8,
-                        "sampler_name": "euler",
-                        "scheduler": "simple",
-                        "denoise": 1
-                    }
-                },
-                "measured": {
-                    "width": 269,
-                    "height": 593
-                },
-                "selected": false,
-                "dragging": false
-            },
-            {
-                "id": "b69d0412-c392-413f-b6d1-66334e3b2e58",
-                "type": "comfy",
-                "position": {
-                    "x": 511.75,
-                    "y": 787.75
-                },
-                "data": {
-                    "label": "CLIP Text Encode (Prompt)",
-                    "nodeType": "CLIPTextEncode",
-                    "widgetValues": {
-                        "text": ""
-                    }
-                },
-                "measured": {
-                    "width": 202,
-                    "height": 179
-                },
-                "selected": false,
-                "dragging": false
-            },
-            {
-                "id": "52964eca-3fdc-407c-b3ea-51f361d49dfe",
-                "type": "comfy",
-                "position": {
-                    "x": 91.74999999999994,
-                    "y": 570.75
-                },
-                "data": {
-                    "label": "Load Checkpoint",
-                    "nodeType": "CheckpointLoaderSimple",
-                    "widgetValues": {
-                        "ckpt_name": "v1-5-pruned-emaonly-fp16.safetensors"
-                    }
-                },
-                "measured": {
-                    "width": 321,
-                    "height": 199
-                },
-                "selected": false,
-                "dragging": false
-            },
-            {
-                "id": "2aa25a49-c618-4965-ad93-d7dfe5c94901",
-                "type": "comfy",
-                "position": {
-                    "x": 1238.7500000000002,
-                    "y": 489.75
-                },
-                "data": {
-                    "label": "VAE Decode",
-                    "nodeType": "VAEDecode",
-                    "widgetValues": {}
-                },
-                "measured": {
-                    "width": 200,
-                    "height": 101
-                },
-                "selected": false,
-                "dragging": false
-            },
-            {
-                "id": "d699f407-9ee4-44a7-8442-5263aa256c24",
-                "type": "comfy",
-                "position": {
-                    "x": 1538.7500000000005,
-                    "y": 500.75
-                },
-                "data": {
-                    "label": "Save Image",
-                    "nodeType": "SaveImage",
-                    "widgetValues": {
-                        "filename_prefix": "ComfyUI"
-                    }
-                },
-                "measured": {
-                    "width": 200,
-                    "height": 179
-                },
-                "selected": false,
-                "dragging": false
-            },
-            {
-                "id": "4164e5b5-4e59-443c-a0fd-13db4d79a9dd",
-                "type": "comfy",
-                "position": {
-                    "x": 227.74999999999983,
-                    "y": 938.7500000000001
-                },
-                "data": {
-                    "label": "Empty Latent Image",
-                    "nodeType": "EmptyLatentImage",
-                    "widgetValues": {
-                        "width": 512,
-                        "height": 512,
-                        "batch_size": 1
-                    }
-                },
-                "measured": {
-                    "width": 221,
-                    "height": 299
-                },
-                "selected": false,
-                "dragging": false
-            }
-        ],
-        "edges": [
-            {
-                "source": "0b93022c-571d-47ea-b82a-b17fd9006bf9",
-                "sourceHandle": "out-CONDITIONING",
-                "target": "55d8cd1d-1abc-40d1-a3f1-1013cea18c56",
-                "targetHandle": "in-positive",
-                "id": "xy-edge__0b93022c-571d-47ea-b82a-b17fd9006bf9out-CONDITIONING-55d8cd1d-1abc-40d1-a3f1-1013cea18c56in-positive"
-            },
-            {
-                "source": "b69d0412-c392-413f-b6d1-66334e3b2e58",
-                "sourceHandle": "out-CONDITIONING",
-                "target": "55d8cd1d-1abc-40d1-a3f1-1013cea18c56",
-                "targetHandle": "in-negative",
-                "id": "xy-edge__b69d0412-c392-413f-b6d1-66334e3b2e58out-CONDITIONING-55d8cd1d-1abc-40d1-a3f1-1013cea18c56in-negative"
-            },
-            {
-                "source": "52964eca-3fdc-407c-b3ea-51f361d49dfe",
-                "sourceHandle": "out-MODEL",
-                "target": "55d8cd1d-1abc-40d1-a3f1-1013cea18c56",
-                "targetHandle": "in-model",
-                "id": "xy-edge__52964eca-3fdc-407c-b3ea-51f361d49dfeout-MODEL-55d8cd1d-1abc-40d1-a3f1-1013cea18c56in-model"
-            },
-            {
-                "source": "52964eca-3fdc-407c-b3ea-51f361d49dfe",
-                "sourceHandle": "out-CLIP",
-                "target": "0b93022c-571d-47ea-b82a-b17fd9006bf9",
-                "targetHandle": "in-clip",
-                "id": "xy-edge__52964eca-3fdc-407c-b3ea-51f361d49dfeout-CLIP-0b93022c-571d-47ea-b82a-b17fd9006bf9in-clip"
-            },
-            {
-                "source": "52964eca-3fdc-407c-b3ea-51f361d49dfe",
-                "sourceHandle": "out-CLIP",
-                "target": "b69d0412-c392-413f-b6d1-66334e3b2e58",
-                "targetHandle": "in-clip",
-                "id": "xy-edge__52964eca-3fdc-407c-b3ea-51f361d49dfeout-CLIP-b69d0412-c392-413f-b6d1-66334e3b2e58in-clip"
-            },
-            {
-                "source": "52964eca-3fdc-407c-b3ea-51f361d49dfe",
-                "sourceHandle": "out-VAE",
-                "target": "2aa25a49-c618-4965-ad93-d7dfe5c94901",
-                "targetHandle": "in-vae",
-                "id": "xy-edge__52964eca-3fdc-407c-b3ea-51f361d49dfeout-VAE-2aa25a49-c618-4965-ad93-d7dfe5c94901in-vae"
-            },
-            {
-                "source": "55d8cd1d-1abc-40d1-a3f1-1013cea18c56",
-                "sourceHandle": "out-LATENT",
-                "target": "2aa25a49-c618-4965-ad93-d7dfe5c94901",
-                "targetHandle": "in-samples",
-                "id": "xy-edge__55d8cd1d-1abc-40d1-a3f1-1013cea18c56out-LATENT-2aa25a49-c618-4965-ad93-d7dfe5c94901in-samples"
-            },
-            {
-                "source": "2aa25a49-c618-4965-ad93-d7dfe5c94901",
-                "sourceHandle": "out-IMAGE",
-                "target": "d699f407-9ee4-44a7-8442-5263aa256c24",
-                "targetHandle": "in-images",
-                "id": "xy-edge__2aa25a49-c618-4965-ad93-d7dfe5c94901out-IMAGE-d699f407-9ee4-44a7-8442-5263aa256c24in-images"
-            },
-            {
-                "source": "4164e5b5-4e59-443c-a0fd-13db4d79a9dd",
-                "sourceHandle": "out-LATENT",
-                "target": "55d8cd1d-1abc-40d1-a3f1-1013cea18c56",
-                "targetHandle": "in-latent_image",
-                "id": "xy-edge__4164e5b5-4e59-443c-a0fd-13db4d79a9ddout-LATENT-55d8cd1d-1abc-40d1-a3f1-1013cea18c56in-latent_image"
-            }
-        ],
-        "viewport": {
-            "x": -134.90560016234667,
-            "y": -75.66283824261677,
-            "zoom": 0.9999999999999999
-        }
+  "version": 1,
+  "savedAt": "2026-01-03T09:40:46.649Z",
+  "graph": {
+    "nodes": [
+      {
+        "id": "0b93022c-571d-47ea-b82a-b17fd9006bf9",
+        "type": "comfy",
+        "position": {
+          "x": 524,
+          "y": 586.5
+        },
+        "data": {
+          "label": "CLIP Text Encode (Prompt)",
+          "nodeType": "CLIPTextEncode",
+          "widgetValues": {
+            "text": "galaxy in a bottle"
+          }
+        },
+        "measured": {
+          "width": 202,
+          "height": 179
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "55d8cd1d-1abc-40d1-a3f1-1013cea18c56",
+        "type": "comfy",
+        "position": {
+          "x": 812.7500000000001,
+          "y": 467.75
+        },
+        "data": {
+          "label": "KSampler",
+          "nodeType": "KSampler",
+          "widgetValues": {
+            "seed": 3,
+            "steps": 20,
+            "cfg": 8,
+            "sampler_name": "euler",
+            "scheduler": "simple",
+            "denoise": 1
+          }
+        },
+        "measured": {
+          "width": 269,
+          "height": 593
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "b69d0412-c392-413f-b6d1-66334e3b2e58",
+        "type": "comfy",
+        "position": {
+          "x": 511.75,
+          "y": 787.75
+        },
+        "data": {
+          "label": "CLIP Text Encode (Prompt)",
+          "nodeType": "CLIPTextEncode",
+          "widgetValues": {
+            "text": ""
+          }
+        },
+        "measured": {
+          "width": 202,
+          "height": 179
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "52964eca-3fdc-407c-b3ea-51f361d49dfe",
+        "type": "comfy",
+        "position": {
+          "x": 91.74999999999994,
+          "y": 570.75
+        },
+        "data": {
+          "label": "Load Checkpoint",
+          "nodeType": "CheckpointLoaderSimple",
+          "widgetValues": {
+            "ckpt_name": "v1-5-pruned-emaonly-fp16.safetensors"
+          }
+        },
+        "measured": {
+          "width": 321,
+          "height": 199
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "2aa25a49-c618-4965-ad93-d7dfe5c94901",
+        "type": "comfy",
+        "position": {
+          "x": 1238.7500000000002,
+          "y": 489.75
+        },
+        "data": {
+          "label": "VAE Decode",
+          "nodeType": "VAEDecode",
+          "widgetValues": {}
+        },
+        "measured": {
+          "width": 200,
+          "height": 101
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "d699f407-9ee4-44a7-8442-5263aa256c24",
+        "type": "comfy",
+        "position": {
+          "x": 1538.7500000000005,
+          "y": 500.75
+        },
+        "data": {
+          "label": "Save Image",
+          "nodeType": "SaveImage",
+          "widgetValues": {
+            "filename_prefix": "ComfyUI"
+          }
+        },
+        "measured": {
+          "width": 200,
+          "height": 179
+        },
+        "selected": false,
+        "dragging": false
+      },
+      {
+        "id": "4164e5b5-4e59-443c-a0fd-13db4d79a9dd",
+        "type": "comfy",
+        "position": {
+          "x": 227.74999999999983,
+          "y": 938.7500000000001
+        },
+        "data": {
+          "label": "Empty Latent Image",
+          "nodeType": "EmptyLatentImage",
+          "widgetValues": {
+            "width": 512,
+            "height": 512,
+            "batch_size": 1
+          }
+        },
+        "measured": {
+          "width": 221,
+          "height": 299
+        },
+        "selected": false,
+        "dragging": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "0b93022c-571d-47ea-b82a-b17fd9006bf9",
+        "sourceHandle": "out-CONDITIONING",
+        "target": "55d8cd1d-1abc-40d1-a3f1-1013cea18c56",
+        "targetHandle": "in-positive",
+        "id": "xy-edge__0b93022c-571d-47ea-b82a-b17fd9006bf9out-CONDITIONING-55d8cd1d-1abc-40d1-a3f1-1013cea18c56in-positive"
+      },
+      {
+        "source": "b69d0412-c392-413f-b6d1-66334e3b2e58",
+        "sourceHandle": "out-CONDITIONING",
+        "target": "55d8cd1d-1abc-40d1-a3f1-1013cea18c56",
+        "targetHandle": "in-negative",
+        "id": "xy-edge__b69d0412-c392-413f-b6d1-66334e3b2e58out-CONDITIONING-55d8cd1d-1abc-40d1-a3f1-1013cea18c56in-negative"
+      },
+      {
+        "source": "52964eca-3fdc-407c-b3ea-51f361d49dfe",
+        "sourceHandle": "out-MODEL",
+        "target": "55d8cd1d-1abc-40d1-a3f1-1013cea18c56",
+        "targetHandle": "in-model",
+        "id": "xy-edge__52964eca-3fdc-407c-b3ea-51f361d49dfeout-MODEL-55d8cd1d-1abc-40d1-a3f1-1013cea18c56in-model"
+      },
+      {
+        "source": "52964eca-3fdc-407c-b3ea-51f361d49dfe",
+        "sourceHandle": "out-CLIP",
+        "target": "0b93022c-571d-47ea-b82a-b17fd9006bf9",
+        "targetHandle": "in-clip",
+        "id": "xy-edge__52964eca-3fdc-407c-b3ea-51f361d49dfeout-CLIP-0b93022c-571d-47ea-b82a-b17fd9006bf9in-clip"
+      },
+      {
+        "source": "52964eca-3fdc-407c-b3ea-51f361d49dfe",
+        "sourceHandle": "out-CLIP",
+        "target": "b69d0412-c392-413f-b6d1-66334e3b2e58",
+        "targetHandle": "in-clip",
+        "id": "xy-edge__52964eca-3fdc-407c-b3ea-51f361d49dfeout-CLIP-b69d0412-c392-413f-b6d1-66334e3b2e58in-clip"
+      },
+      {
+        "source": "52964eca-3fdc-407c-b3ea-51f361d49dfe",
+        "sourceHandle": "out-VAE",
+        "target": "2aa25a49-c618-4965-ad93-d7dfe5c94901",
+        "targetHandle": "in-vae",
+        "id": "xy-edge__52964eca-3fdc-407c-b3ea-51f361d49dfeout-VAE-2aa25a49-c618-4965-ad93-d7dfe5c94901in-vae"
+      },
+      {
+        "source": "55d8cd1d-1abc-40d1-a3f1-1013cea18c56",
+        "sourceHandle": "out-LATENT",
+        "target": "2aa25a49-c618-4965-ad93-d7dfe5c94901",
+        "targetHandle": "in-samples",
+        "id": "xy-edge__55d8cd1d-1abc-40d1-a3f1-1013cea18c56out-LATENT-2aa25a49-c618-4965-ad93-d7dfe5c94901in-samples"
+      },
+      {
+        "source": "2aa25a49-c618-4965-ad93-d7dfe5c94901",
+        "sourceHandle": "out-IMAGE",
+        "target": "d699f407-9ee4-44a7-8442-5263aa256c24",
+        "targetHandle": "in-images",
+        "id": "xy-edge__2aa25a49-c618-4965-ad93-d7dfe5c94901out-IMAGE-d699f407-9ee4-44a7-8442-5263aa256c24in-images"
+      },
+      {
+        "source": "4164e5b5-4e59-443c-a0fd-13db4d79a9dd",
+        "sourceHandle": "out-LATENT",
+        "target": "55d8cd1d-1abc-40d1-a3f1-1013cea18c56",
+        "targetHandle": "in-latent_image",
+        "id": "xy-edge__4164e5b5-4e59-443c-a0fd-13db4d79a9ddout-LATENT-55d8cd1d-1abc-40d1-a3f1-1013cea18c56in-latent_image"
+      }
+    ],
+    "viewport": {
+      "x": -134.90560016234667,
+      "y": -75.66283824261677,
+      "zoom": 0.9999999999999999
     }
+  }
 }

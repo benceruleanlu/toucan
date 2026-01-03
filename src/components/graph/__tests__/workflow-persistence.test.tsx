@@ -1,17 +1,21 @@
 import { renderHook } from "@testing-library/react"
-import type { Edge, ReactFlowInstance, ReactFlowJsonObject } from "@xyflow/react"
+import type {
+  Edge,
+  ReactFlowInstance,
+  ReactFlowJsonObject,
+} from "@xyflow/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
+import testGraphSnapshot from "@/components/graph/__tests__/test-graph.json"
 import type { CanvasNode } from "@/components/graph/comfy-node"
 import { useWorkflowPersistence } from "@/components/graph/use-workflow-persistence"
-import {
-  WORKFLOW_SNAPSHOT_VERSION,
-} from "@/lib/comfy/workflow-snapshot"
-import testGraphSnapshot from "@/components/graph/__tests__/test-graph.json"
+import { WORKFLOW_SNAPSHOT_VERSION } from "@/lib/comfy/workflow-snapshot"
 
 const WORKFLOW_STORAGE_KEY = "toucan:workflow:v1"
 
-const graphFromFixture =
-  testGraphSnapshot.graph as ReactFlowJsonObject<CanvasNode, Edge>
+const graphFromFixture = testGraphSnapshot.graph as ReactFlowJsonObject<
+  CanvasNode,
+  Edge
+>
 
 const createInstance = (
   graph: ReactFlowJsonObject<CanvasNode, Edge>,
