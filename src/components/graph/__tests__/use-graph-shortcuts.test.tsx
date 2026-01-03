@@ -46,7 +46,7 @@ describe("useGraphShortcuts", () => {
     input.focus()
 
     fireEvent.keyDown(input, { key: "s", ctrlKey: true })
-    
+
     expect(onSave).not.toHaveBeenCalled()
     document.body.removeChild(input)
   })
