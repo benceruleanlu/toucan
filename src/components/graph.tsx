@@ -52,6 +52,7 @@ export function ComfyFlowCanvas() {
     nodes,
     edges,
     nodeSchemas,
+    setNodes,
     apiBase: API_BASE,
     getSnapshot: createSnapshot,
   })

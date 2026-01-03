@@ -9,7 +9,11 @@ import {
 } from "@xyflow/react"
 import * as React from "react"
 import { HANDLE_OFFSET } from "@/components/graph/constants"
-import { renderNodeWidget } from "@/components/graph/node-widgets"
+import {
+  renderControlAfterGenerateWidget,
+  renderNodeWidget,
+} from "@/components/graph/node-widgets"
+import type { WidgetControlValue } from "@/lib/comfy/control-after-generate"
 import {
   getWidgetSpec,
   type NodeSchemaMap,
@@ -20,6 +24,7 @@ export type ComfyNodeData = {
   label: string
   nodeType: string
   widgetValues: Record<string, WidgetValue>
+  widgetControlValues?: Record<string, WidgetControlValue>
 }
 
 export type ComfyFlowNode = Node<ComfyNodeData, "comfy">
@@ -35,12 +40,25 @@ export function ComfyNode({ data, id }: NodeProps<ComfyFlowNode>) {
     schema?.inputs.filter((slot) => slot.group !== "hidden") ?? []
   const outputSlots = schema?.outputs ?? []
   const widgetValues = data.widgetValues ?? {}
+  const widgetControlValues = data.widgetControlValues ?? {}
 
   const handleWidgetChange = React.useCallback(
     (slotName: string, value: WidgetValue) => {
       updateNodeData(id, (node) => ({
         widgetValues: {
           ...(node.data.widgetValues ?? {}),
+          [slotName]: value,
+        },
+      }))
+    },
+    [id, updateNodeData],
+  )
+
+  const handleControlChange = React.useCallback(
+    (slotName: string, value: WidgetControlValue) => {
+      updateNodeData(id, (node) => ({
+        widgetControlValues: {
+          ...(node.data.widgetControlValues ?? {}),
           [slotName]: value,
         },
       }))
@@ -66,9 +84,15 @@ export function ComfyNode({ data, id }: NodeProps<ComfyFlowNode>) {
       value: widgetValues[slot.name],
       onChange: handleWidgetChange,
     })
+    const controlWidget = renderControlAfterGenerateWidget({
+      slot,
+      widgetSpec,
+      value: widgetControlValues[slot.name],
+      onChange: handleControlChange,
+    })
 
     if (widget) {
-      inputSlotsWithWidgets.push({ slot, displayName, widget })
+      inputSlotsWithWidgets.push({ slot, displayName, widget, controlWidget })
     } else {
       inputSlotsWithoutWidgets.push({ slot, displayName })
     }
@@ -122,27 +146,32 @@ export function ComfyNode({ data, id }: NodeProps<ComfyFlowNode>) {
         ) : null}
         {inputSlotsWithWidgets.length > 0 ? (
           <div className="flex flex-col gap-3">
-            {inputSlotsWithWidgets.map(({ slot, displayName, widget }) => (
-              <div
-                key={`widget-${slot.name}`}
-                className="flex flex-col gap-1.5"
-              >
-                <div className="relative flex min-h-5 items-center">
-                  <Handle
-                    type="target"
-                    position={Position.Left}
-                    id={`in-${slot.name}`}
-                    style={{ left: -HANDLE_OFFSET }}
-                  />
-                  <span className="pl-2" title={slot.tooltip}>
-                    {displayName}
-                  </span>
+            {inputSlotsWithWidgets.map(
+              ({ slot, displayName, widget, controlWidget }) => (
+                <div
+                  key={`widget-${slot.name}`}
+                  className="flex flex-col gap-1.5"
+                >
+                  <div className="relative flex min-h-5 items-center">
+                    <Handle
+                      type="target"
+                      position={Position.Left}
+                      id={`in-${slot.name}`}
+                      style={{ left: -HANDLE_OFFSET }}
+                    />
+                    <span className="pl-2" title={slot.tooltip}>
+                      {displayName}
+                    </span>
+                  </div>
+                  <div className="flex min-w-0 items-start gap-2">
+                    <div className="min-w-0 flex-1">{widget}</div>
+                    {controlWidget ? (
+                      <div className="w-28 shrink-0">{controlWidget}</div>
+                    ) : null}
+                  </div>
                 </div>
-                <div className="flex min-w-0 items-start">
-                  <div className="min-w-0 flex-1">{widget}</div>
-                </div>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         ) : null}
       </div>

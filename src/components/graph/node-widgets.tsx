@@ -3,15 +3,32 @@ import { Input } from "@/components/ui/input"
 import { Select } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  CONTROL_AFTER_GENERATE_OPTIONS,
+  isControlAfterGenerateEnabled,
+  normalizeControlValue,
+  type WidgetControlValue,
+} from "@/lib/comfy/control-after-generate"
 import type { InputSlot, WidgetSpec, WidgetValue } from "@/lib/comfy/objectInfo"
 
 type WidgetChangeHandler = (slotName: string, value: WidgetValue) => void
+type ControlWidgetChangeHandler = (
+  slotName: string,
+  value: WidgetControlValue,
+) => void
 
 type WidgetRenderParams = {
   slot: InputSlot
   widgetSpec: WidgetSpec | null
   value: WidgetValue | undefined
   onChange: WidgetChangeHandler
+}
+
+type ControlWidgetRenderParams = {
+  slot: InputSlot
+  widgetSpec: WidgetSpec | null
+  value: WidgetControlValue | undefined
+  onChange: ControlWidgetChangeHandler
 }
 
 const renderStringWidget = ({
@@ -166,4 +183,43 @@ export const renderNodeWidget = ({
     default:
       return null
   }
+}
+
+export const renderControlAfterGenerateWidget = ({
+  slot,
+  widgetSpec,
+  value,
+  onChange,
+}: ControlWidgetRenderParams): React.ReactNode | null => {
+  if (!widgetSpec || !isControlAfterGenerateEnabled(slot)) {
+    return null
+  }
+
+  if (widgetSpec.kind !== "number" && widgetSpec.kind !== "select") {
+    return null
+  }
+
+  const selectedValue = normalizeControlValue(value)
+
+  return (
+    <Select
+      className="nodrag text-xs leading-5 text-slate-700"
+      aria-label="Control after generate"
+      title="Control after generate"
+      value={selectedValue}
+      onChange={(event) => {
+        const nextValue = event.target.value as WidgetControlValue
+        if (!CONTROL_AFTER_GENERATE_OPTIONS.includes(nextValue)) {
+          return
+        }
+        onChange(slot.name, nextValue)
+      }}
+    >
+      {CONTROL_AFTER_GENERATE_OPTIONS.map((option) => (
+        <option key={`${slot.name}-control-${option}`} value={option}>
+          {option}
+        </option>
+      ))}
+    </Select>
+  )
 }

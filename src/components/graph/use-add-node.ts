@@ -1,6 +1,7 @@
 import type { ReactFlowInstance } from "@xyflow/react"
 import * as React from "react"
 import type { CanvasNode } from "@/components/graph/comfy-node"
+import { buildControlDefaults } from "@/lib/comfy/control-after-generate"
 import type { NodeCatalogEntry, NodeSchemaMap } from "@/lib/comfy/objectInfo"
 import { buildWidgetDefaults } from "@/lib/comfy/widget-defaults"
 
@@ -46,6 +47,9 @@ export const useAddNode = ({
           y: center.y + offset,
         }
         const widgetValues = buildWidgetDefaults(nodeSchemas[nodeDef.name])
+        const widgetControlValues = buildControlDefaults(
+          nodeSchemas[nodeDef.name],
+        )
 
         return [
           ...current,
@@ -57,6 +61,7 @@ export const useAddNode = ({
               label: nodeDef.displayName,
               nodeType: nodeDef.name,
               widgetValues,
+              widgetControlValues,
             },
           },
         ]

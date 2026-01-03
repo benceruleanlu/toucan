@@ -11,7 +11,7 @@ export type RawInputConfig = {
   tooltip?: string
   display_name?: string
   advanced?: boolean
-  control_after_generate?: boolean
+  control_after_generate?: boolean | string
   forceInput?: boolean
   [key: string]: unknown
 }
