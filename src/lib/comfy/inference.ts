@@ -7,9 +7,18 @@ type QueuePromptInput = {
   workflow?: unknown
 }
 
+type InterruptPromptInput = {
+  baseUrl: string
+  promptId?: string | null
+}
+
 export type QueuePromptResult =
   | { ok: true; payload: unknown }
   | { ok: false; message: string; payload?: unknown }
+
+export type InterruptPromptResult =
+  | { ok: true }
+  | { ok: false; message?: string }
 
 const extractErrorMessage = (payload: unknown) => {
   if (!payload || typeof payload !== "object") {
@@ -68,4 +77,29 @@ export const queuePrompt = async ({
   }
 
   return { ok: true, payload }
+}
+
+export const interruptPrompt = async ({
+  baseUrl,
+  promptId,
+}: InterruptPromptInput): Promise<InterruptPromptResult> => {
+  let response: Response
+  try {
+    response = await fetch(`${baseUrl}/interrupt`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(promptId ? { prompt_id: promptId } : {}),
+    })
+  } catch {
+    return { ok: false, message: "Failed to reach the ComfyUI backend." }
+  }
+
+  if (!response.ok) {
+    return {
+      ok: false,
+      message: `Failed to interrupt prompt (${response.status}).`,
+    }
+  }
+
+  return { ok: true }
 }

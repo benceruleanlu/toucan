@@ -8,7 +8,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import testGraphSnapshot from "@/components/graph/__tests__/test-graph.json"
 import type { CanvasNode } from "@/components/graph/comfy-node"
 import { useWorkflowPersistence } from "@/components/graph/use-workflow-persistence"
-import { WORKFLOW_SNAPSHOT_VERSION } from "@/lib/comfy/workflow-snapshot"
 
 const WORKFLOW_STORAGE_KEY = "toucan:workflow:v1"
 
@@ -140,7 +139,8 @@ describe("workflow persistence", () => {
 
     const raw = window.localStorage.getItem(WORKFLOW_STORAGE_KEY)
     expect(raw).toBeTruthy()
-    const parsed = JSON.parse(raw!)
+    if (!raw) throw new Error("Expected raw to be truthy")
+    const parsed = JSON.parse(raw)
     expect(parsed.graph.nodes).toEqual(graph.nodes)
   })
 })

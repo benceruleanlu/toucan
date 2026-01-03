@@ -18,6 +18,7 @@ type UseQueuePromptArgs = {
   setNodes: React.Dispatch<React.SetStateAction<CanvasNode[]>>
   apiBase: string
   getSnapshot: () => WorkflowSnapshot<CanvasNode, Edge> | null
+  onQueued?: (promptId: string) => void
 }
 
 type QueuePromptApi = {
@@ -26,6 +27,14 @@ type QueuePromptApi = {
 
 const getControlAfterGenerateMode = (): ControlAfterGenerateMode => "after"
 
+const extractPromptId = (payload: unknown) => {
+  if (!payload || typeof payload !== "object") {
+    return null
+  }
+  const promptId = (payload as { prompt_id?: unknown }).prompt_id
+  return typeof promptId === "string" ? promptId : null
+}
+
 export const useQueuePrompt = ({
   nodes,
   edges,
@@ -33,6 +42,7 @@ export const useQueuePrompt = ({
   setNodes,
   apiBase,
   getSnapshot,
+  onQueued,
 }: UseQueuePromptArgs): QueuePromptApi => {
   const controlMode = getControlAfterGenerateMode()
   const executedControlsRef = React.useRef<Set<string>>(new Set())
@@ -95,6 +105,11 @@ export const useQueuePrompt = ({
       return
     }
 
+    const promptId = extractPromptId(result.payload)
+    if (promptId) {
+      onQueued?.(promptId)
+    }
+
     if (controlMode === "after") {
       setNodes((current) => {
         const updated = applyControlAfterGenerate({
@@ -107,7 +122,16 @@ export const useQueuePrompt = ({
     }
 
     console.info("Prompt queued", result.payload)
-  }, [apiBase, edges, getSnapshot, nodeSchemas, nodes, setNodes])
+  }, [
+    apiBase,
+    edges,
+    getSnapshot,
+    nodeSchemas,
+    nodes,
+    onQueued,
+    setNodes,
+    controlMode,
+  ])
 
   return { queuePrompt }
 }

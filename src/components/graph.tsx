@@ -17,8 +17,11 @@ import {
 } from "@/components/graph/comfy-node"
 import { CommandPalette } from "@/components/graph/command-palette"
 import { API_BASE } from "@/components/graph/constants"
+import { ExecutionStateContext } from "@/components/graph/execution-context"
+import { ExecutionHud } from "@/components/graph/execution-hud"
 import { useAddNode } from "@/components/graph/use-add-node"
 import { useCommandPaletteOpen } from "@/components/graph/use-command-palette-open"
+import { useExecutionMonitor } from "@/components/graph/use-execution-monitor"
 import { useGraphConnections } from "@/components/graph/use-graph-connections"
 import { useGraphShortcuts } from "@/components/graph/use-graph-shortcuts"
 import { useNodeCatalog } from "@/components/graph/use-node-catalog"
@@ -48,6 +51,14 @@ export function ComfyFlowCanvas() {
       setEdges,
     })
 
+  const {
+    state: executionState,
+    markPromptQueued,
+    interrupt,
+  } = useExecutionMonitor({
+    apiBase: API_BASE,
+  })
+
   const { queuePrompt } = useQueuePrompt({
     nodes,
     edges,
@@ -55,6 +66,7 @@ export function ComfyFlowCanvas() {
     setNodes,
     apiBase: API_BASE,
     getSnapshot: createSnapshot,
+    onQueued: markPromptQueued,
   })
 
   const { isConnectionValid, handleConnect } = useGraphConnections({
@@ -77,6 +89,18 @@ export function ComfyFlowCanvas() {
     ? "Loading nodes..."
     : (nodesError ?? "No nodes found.")
 
+  const currentNodeLabel = React.useMemo(() => {
+    if (!executionState.currentNodeId) {
+      return null
+    }
+    const node = nodes.find((item) => item.id === executionState.currentNodeId)
+    if (!node) {
+      return `Node ${executionState.currentNodeId}`
+    }
+    const schema = nodeSchemas[node.data.nodeType]
+    return schema?.displayName ?? node.data.label
+  }, [executionState.currentNodeId, nodeSchemas, nodes])
+
   React.useEffect(() => {
     const instance = reactFlowInstanceRef.current
     if (!instance || !schemasReady || !isFlowReady) {
@@ -88,32 +112,41 @@ export function ComfyFlowCanvas() {
 
   return (
     <NodeSchemaContext.Provider value={nodeSchemas}>
-      <div style={{ height: "100vh", width: "100vw" }}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={handleConnect}
-          isValidConnection={isConnectionValid}
-          nodeTypes={nodeTypes}
-          onInit={(instance) => {
-            reactFlowInstanceRef.current = instance
-            setIsFlowReady(true)
-          }}
-          proOptions={{ hideAttribution: true }}
-        >
-          <Background />
-          <Controls />
-        </ReactFlow>
-        <CommandPalette
-          open={commandOpen}
-          onOpenChange={setCommandOpen}
-          nodeDefs={nodeDefs}
-          emptyStateText={emptyStateText}
-          onSelectNode={addNode}
-        />
-      </div>
+      <ExecutionStateContext.Provider value={executionState}>
+        <div className="relative" style={{ height: "100vh", width: "100vw" }}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={handleConnect}
+            isValidConnection={isConnectionValid}
+            nodeTypes={nodeTypes}
+            onInit={(instance) => {
+              reactFlowInstanceRef.current = instance
+              setIsFlowReady(true)
+            }}
+            proOptions={{ hideAttribution: true }}
+          >
+            <Background />
+            <Controls />
+          </ReactFlow>
+          <ExecutionHud
+            phase={executionState.phase}
+            currentNodeLabel={currentNodeLabel}
+            queueRemaining={executionState.queueRemaining}
+            startedAt={executionState.startedAt}
+            onCancel={interrupt}
+          />
+          <CommandPalette
+            open={commandOpen}
+            onOpenChange={setCommandOpen}
+            nodeDefs={nodeDefs}
+            emptyStateText={emptyStateText}
+            onSelectNode={addNode}
+          />
+        </div>
+      </ExecutionStateContext.Provider>
     </NodeSchemaContext.Provider>
   )
 }

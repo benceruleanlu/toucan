@@ -9,6 +9,7 @@ import {
 } from "@xyflow/react"
 import * as React from "react"
 import { HANDLE_OFFSET } from "@/components/graph/constants"
+import { ExecutionStateContext } from "@/components/graph/execution-context"
 import {
   renderControlAfterGenerateWidget,
   renderNodeWidget,
@@ -19,6 +20,7 @@ import {
   type NodeSchemaMap,
   type WidgetValue,
 } from "@/lib/comfy/objectInfo"
+import { cn } from "@/lib/utils"
 
 export type ComfyNodeData = {
   label: string
@@ -32,15 +34,78 @@ export type CanvasNode = ComfyFlowNode
 
 export const NodeSchemaContext = React.createContext<NodeSchemaMap>({})
 
+const CheckIcon = ({ className }: { className?: string }) => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 16 16"
+    className={cn("block", className)}
+    fill="none"
+  >
+    <path
+      d="M3.5 8.5L6.5 11.5L12.5 4.5"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
 export function ComfyNode({ data, id }: NodeProps<ComfyFlowNode>) {
   const { updateNodeData } = useReactFlow<CanvasNode>()
   const nodeSchemas = React.useContext(NodeSchemaContext)
+  const executionState = React.useContext(ExecutionStateContext)
   const schema = nodeSchemas[data.nodeType]
   const inputSlots =
     schema?.inputs.filter((slot) => slot.group !== "hidden") ?? []
   const outputSlots = schema?.outputs ?? []
   const widgetValues = data.widgetValues ?? {}
   const widgetControlValues = data.widgetControlValues ?? {}
+  const nodeStatus = executionState?.nodeStatuses[id]
+  const nodeProgress = executionState?.nodeProgress[id]
+  const nodeError = executionState?.nodeErrors[id]
+  const progressPercent =
+    nodeProgress && nodeProgress.max > 0
+      ? Math.min(100, (nodeProgress.value / nodeProgress.max) * 100)
+      : null
+  const badgeBase =
+    "inline-flex items-center justify-center rounded text-[10px] font-semibold leading-none"
+
+  const statusBadge = (() => {
+    if (nodeStatus === "cached") {
+      return (
+        <span
+          className={cn(badgeBase, "bg-slate-100 px-1.5 py-0.5 text-slate-500")}
+        >
+          CACHED
+        </span>
+      )
+    }
+    if (nodeStatus === "completed") {
+      return (
+        <span className={cn(badgeBase, "h-4 w-4 text-slate-400")}>
+          <CheckIcon className="h-3 w-3" />
+        </span>
+      )
+    }
+    if (nodeStatus === "error") {
+      return (
+        <span className={cn(badgeBase, "bg-red-50 px-1.5 py-0.5 text-red-600")}>
+          ERR
+        </span>
+      )
+    }
+    if (nodeStatus === "interrupted") {
+      return (
+        <span
+          className={cn(badgeBase, "bg-amber-50 px-1.5 py-0.5 text-amber-600")}
+        >
+          STOP
+        </span>
+      )
+    }
+    return null
+  })()
 
   const handleWidgetChange = React.useCallback(
     (slotName: string, value: WidgetValue) => {
@@ -99,7 +164,20 @@ export function ComfyNode({ data, id }: NodeProps<ComfyFlowNode>) {
   }
 
   return (
-    <div className="relative min-w-[200px] rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs shadow-sm">
+    <div
+      className={cn(
+        "relative min-w-[200px] rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs shadow-sm",
+        nodeStatus === "running" &&
+          "ring-2 ring-sky-400 ring-offset-2 ring-offset-white",
+        nodeStatus === "error" && "border-red-300 ring-1 ring-red-200",
+        nodeStatus === "interrupted" &&
+          "border-amber-300 ring-1 ring-amber-200",
+      )}
+      title={nodeError}
+    >
+      {statusBadge ? (
+        <div className="absolute right-2 top-2">{statusBadge}</div>
+      ) : null}
       <div className="text-sm font-semibold text-slate-900">
         {schema?.displayName ?? data.label}
       </div>
@@ -175,6 +253,14 @@ export function ComfyNode({ data, id }: NodeProps<ComfyFlowNode>) {
           </div>
         ) : null}
       </div>
+      {progressPercent !== null ? (
+        <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-slate-100">
+          <div
+            className="h-full rounded-full bg-slate-400"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+      ) : null}
     </div>
   )
 }
