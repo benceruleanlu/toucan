@@ -8,12 +8,12 @@ import {
   useNodesState,
 } from "@xyflow/react"
 import * as React from "react"
-import { CommandPalette } from "@/components/graph/command-palette"
 import {
-  NodeSchemaContext,
   type CanvasNode,
+  NodeSchemaContext,
   nodeTypes,
 } from "@/components/graph/comfy-node"
+import { CommandPalette } from "@/components/graph/command-palette"
 import { useCommandPaletteOpen } from "@/components/graph/use-command-palette-open"
 import { useNodeCatalog } from "@/components/graph/use-node-catalog"
 import type { NodeCatalogEntry } from "@/lib/comfy/objectInfo"

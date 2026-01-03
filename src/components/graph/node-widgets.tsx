@@ -1,4 +1,4 @@
-import * as React from "react"
+import type * as React from "react"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"

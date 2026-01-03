@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { MAX_RESULTS_WHEN_EMPTY } from "@/components/graph/constants"
 import {
   CommandDialog,
   CommandEmpty,
@@ -9,7 +10,6 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command"
-import { MAX_RESULTS_WHEN_EMPTY } from "@/components/graph/constants"
 import type { NodeCatalogEntry } from "@/lib/comfy/objectInfo"
 
 type CommandPaletteProps = {
