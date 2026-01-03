@@ -7,8 +7,8 @@ import {
   Controls,
   type Edge,
   ReactFlow,
-  type ReactFlowJsonObject,
   type ReactFlowInstance,
+  type ReactFlowJsonObject,
   useEdgesState,
   useNodesState,
 } from "@xyflow/react"
@@ -19,8 +19,10 @@ import {
   nodeTypes,
 } from "@/components/graph/comfy-node"
 import { CommandPalette } from "@/components/graph/command-palette"
+import { API_BASE } from "@/components/graph/constants"
 import { useCommandPaletteOpen } from "@/components/graph/use-command-palette-open"
 import { useNodeCatalog } from "@/components/graph/use-node-catalog"
+import { getComfyClientId } from "@/lib/comfy/client-id"
 import type {
   InputSlot,
   NodeCatalogEntry,
@@ -28,6 +30,7 @@ import type {
   NodeSchemaMap,
   OutputSlot,
 } from "@/lib/comfy/objectInfo"
+import { buildPromptFromGraph } from "@/lib/comfy/prompt"
 import { buildWidgetDefaults } from "@/lib/comfy/widget-defaults"
 
 type ResolvedConnectionSlots = {
@@ -213,10 +216,10 @@ export function ComfyFlowCanvas() {
     React.useRef<ReactFlowInstance<CanvasNode> | null>(null)
   const hasRestoredRef = React.useRef(false)
 
-  const saveWorkflow = React.useCallback(() => {
+  const createWorkflowSnapshot = React.useCallback(() => {
     const instance = reactFlowInstanceRef.current
-    if (!instance || typeof window === "undefined") {
-      return
+    if (!instance) {
+      return null
     }
 
     const graph = instance.toObject()
@@ -224,6 +227,19 @@ export function ComfyFlowCanvas() {
       version: WORKFLOW_SNAPSHOT_VERSION,
       savedAt: new Date().toISOString(),
       graph,
+    }
+
+    return snapshot
+  }, [])
+
+  const saveWorkflow = React.useCallback(() => {
+    if (typeof window === "undefined") {
+      return
+    }
+
+    const snapshot = createWorkflowSnapshot()
+    if (!snapshot) {
+      return
     }
 
     try {
@@ -234,7 +250,7 @@ export function ComfyFlowCanvas() {
     } catch {
       return
     }
-  }, [])
+  }, [createWorkflowSnapshot])
 
   const loadWorkflow = React.useCallback(
     (instance: ReactFlowInstance<CanvasNode, Edge>) => {
@@ -262,6 +278,76 @@ export function ComfyFlowCanvas() {
     [setEdges, setNodes],
   )
 
+  const queuePrompt = React.useCallback(async () => {
+    const { prompt, errors, warnings } = buildPromptFromGraph(
+      nodes,
+      edges,
+      nodeSchemas,
+    )
+
+    if (errors.length > 0) {
+      window.alert(
+        `Fix the following before running:\n${errors.map((error) => `- ${error}`).join("\n")}`,
+      )
+      return
+    }
+
+    if (warnings.length > 0) {
+      const proceed = window.confirm(
+        `Warnings:\n${warnings.map((warning) => `- ${warning}`).join("\n")}\n\nRun anyway?`,
+      )
+      if (!proceed) {
+        return
+      }
+    }
+
+    const extra_data: Record<string, unknown> = {
+      client_id: getComfyClientId(),
+    }
+    const snapshot = createWorkflowSnapshot()
+    if (snapshot) {
+      extra_data.extra_pnginfo = { workflow: snapshot.graph }
+    }
+
+    let response: Response
+    try {
+      response = await fetch(`${API_BASE}/prompt`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt, extra_data }),
+      })
+    } catch {
+      window.alert("Failed to reach the ComfyUI backend.")
+      return
+    }
+
+    let payload: unknown = null
+    try {
+      payload = await response.json()
+    } catch {
+      payload = null
+    }
+
+    if (!response.ok) {
+      let message = `Failed to queue prompt (${response.status}).`
+      if (payload && typeof payload === "object") {
+        const errorValue = (payload as { error?: unknown }).error
+        if (typeof errorValue === "string") {
+          message = errorValue
+        } else if (errorValue && typeof errorValue === "object") {
+          const errorMessage = (errorValue as { message?: unknown }).message
+          if (typeof errorMessage === "string") {
+            message = errorMessage
+          }
+        }
+      }
+      window.alert(message)
+      return
+    }
+
+    console.info("Prompt queued", payload)
+  }, [createWorkflowSnapshot, edges, nodeSchemas, nodes])
+
   React.useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       const target = event.target
@@ -279,13 +365,18 @@ export function ComfyFlowCanvas() {
         event.preventDefault()
         saveWorkflow()
       }
+
+      if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+        event.preventDefault()
+        void queuePrompt()
+      }
     }
 
     window.addEventListener("keydown", handleKeyDown)
     return () => {
       window.removeEventListener("keydown", handleKeyDown)
     }
-  }, [saveWorkflow])
+  }, [queuePrompt, saveWorkflow])
 
   const handleAddNode = React.useCallback(
     (nodeDef: NodeCatalogEntry) => {
