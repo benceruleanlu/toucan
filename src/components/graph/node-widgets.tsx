@@ -1,5 +1,6 @@
 import type * as React from "react"
 import { Input } from "@/components/ui/input"
+import { Select } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 import type { InputSlot, WidgetSpec, WidgetValue } from "@/lib/comfy/objectInfo"
@@ -116,6 +117,35 @@ const renderBooleanWidget = ({
   )
 }
 
+const renderSelectWidget = ({
+  slot,
+  widgetSpec,
+  value,
+  onChange,
+}: WidgetRenderParams): React.ReactNode => {
+  const options = widgetSpec?.options ?? []
+  const selectedValue =
+    typeof value === "string"
+      ? value
+      : typeof widgetSpec?.defaultValue === "string"
+        ? widgetSpec.defaultValue
+        : options[0] ?? ""
+
+  return (
+    <Select
+      className="nodrag text-xs leading-5 text-slate-900"
+      value={selectedValue}
+      onChange={(event) => onChange(slot.name, event.target.value)}
+    >
+      {options.map((option) => (
+        <option key={`${slot.name}-${option}`} value={option}>
+          {option}
+        </option>
+      ))}
+    </Select>
+  )
+}
+
 export const renderNodeWidget = ({
   widgetSpec,
   ...params
@@ -131,6 +161,8 @@ export const renderNodeWidget = ({
       return renderNumberWidget({ ...params, widgetSpec })
     case "boolean":
       return renderBooleanWidget({ ...params, widgetSpec })
+    case "select":
+      return renderSelectWidget({ ...params, widgetSpec })
     default:
       return null
   }
