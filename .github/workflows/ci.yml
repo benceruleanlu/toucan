@@ -22,3 +22,5 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
+      - run: pnpm playwright install --with-deps
+      - run: pnpm playwright test
