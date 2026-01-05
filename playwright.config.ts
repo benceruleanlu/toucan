@@ -74,7 +74,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: "pnpm storybook -- --ci",
+    command: "pnpm storybook",
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
