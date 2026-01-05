@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react"
-import { type NodeProps, ReactFlowProvider } from "@xyflow/react"
+import { type NodeProps, ReactFlow, ReactFlowProvider } from "@xyflow/react"
 import "@xyflow/react/dist/style.css"
 
 import "../../app/globals.css"
@@ -8,6 +8,7 @@ import {
   type ComfyFlowNode,
   ComfyNode,
   NodeSchemaContext,
+  nodeTypes,
 } from "@/components/graph/comfy-node"
 import {
   type ExecutionState,
@@ -113,7 +114,9 @@ const meta = {
         <NodeSchemaContext.Provider value={nodeSchemas}>
           <ExecutionStateContext.Provider value={executionState}>
             <div className="bg-slate-100 p-6">
-              <Story />
+              <div className="h-[320px] w-[360px]">
+                <Story />
+              </div>
             </div>
           </ExecutionStateContext.Provider>
         </NodeSchemaContext.Provider>
@@ -126,4 +129,25 @@ export default meta
 
 type Story = StoryObj<typeof ComfyNode>
 
-export const OutputCarousel: Story = {}
+export const OutputCarousel: Story = {
+  render: (args) => {
+    const nodes: ComfyFlowNode[] = [
+      {
+        id: args.id,
+        type: "comfy",
+        position: { x: 0, y: 0 },
+        data: args.data,
+      },
+    ]
+
+    return (
+      <ReactFlow
+        defaultNodes={nodes}
+        defaultEdges={[]}
+        nodeTypes={nodeTypes}
+        fitView
+        proOptions={{ hideAttribution: true }}
+      />
+    )
+  },
+}

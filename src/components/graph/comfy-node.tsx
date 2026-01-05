@@ -99,7 +99,7 @@ export function ComfyNode({ data, id }: NodeProps<ComfyFlowNode>) {
         key={`${itemKey}-image`}
         src={displayUrl}
         alt={`Output ${index + 1}`}
-        className="block h-24 w-full object-contain"
+        className="block h-auto w-full object-contain"
         width={320}
         height={96}
         loading="lazy"
