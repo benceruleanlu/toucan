@@ -104,7 +104,6 @@ export function ComfyNode({ data, id }: NodeProps<ComfyFlowNode>) {
         height={96}
         loading="lazy"
         decoding="async"
-        unoptimized
       />
     )
     const containerClassName = "overflow-hidden rounded-md bg-slate-50"
