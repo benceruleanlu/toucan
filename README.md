@@ -37,6 +37,14 @@ in the toucan folder
 pnpm dev
 ```
 
+If you want multiple local instances, run each frontend on its own port and
+point it at a different ComfyUI port:
+
+```bash
+PORT=3000 NEXT_PUBLIC_COMFY_API_BASE=http://127.0.0.1:8188 pnpm dev
+PORT=3001 NEXT_PUBLIC_COMFY_API_BASE=http://127.0.0.1:8189 pnpm dev
+```
+
 ## attributions
 
 this project is only made possible with the great work done by the [React Flow](https://reactflow.dev/) team.
