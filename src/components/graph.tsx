@@ -122,8 +122,6 @@ export function ComfyFlowCanvas() {
             onConnect={handleConnect}
             isValidConnection={isConnectionValid}
             nodeTypes={nodeTypes}
-            noPanClassName="rf-no-pan"
-            noDragClassName="rf-no-drag"
             onInit={(instance) => {
               reactFlowInstanceRef.current = instance
               setIsFlowReady(true)

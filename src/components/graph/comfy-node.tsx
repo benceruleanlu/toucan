@@ -130,7 +130,7 @@ export function ComfyNode({ data, id }: NodeProps<ComfyFlowNode>) {
       : null
   const badgeBase =
     "inline-flex items-center justify-center rounded text-[10px] font-semibold leading-none"
-  const outputInteractionClassName = "rf-no-pan rf-no-drag"
+  const outputInteractionClassName = "nopan nodrag"
 
   const statusBadge = (() => {
     if (nodeStatus === "cached") {

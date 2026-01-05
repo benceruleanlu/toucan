@@ -145,8 +145,6 @@ export const OutputCarousel: Story = {
         defaultNodes={nodes}
         defaultEdges={[]}
         nodeTypes={nodeTypes}
-        noPanClassName="rf-no-pan"
-        noDragClassName="rf-no-drag"
         fitView
         proOptions={{ hideAttribution: true }}
       />
