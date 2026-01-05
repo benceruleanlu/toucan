@@ -23,6 +23,8 @@ export type FileOutput = {
   filename: string
   subfolder?: string | null
   type?: string | null
+  url?: string | null
+  previewUrl?: string | null
 }
 
 export type NodeOutput = {

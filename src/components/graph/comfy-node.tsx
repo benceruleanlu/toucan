@@ -76,18 +76,25 @@ export function ComfyNode({ data, id }: NodeProps<ComfyFlowNode>) {
   const outputImages =
     schema?.isOutputNode && nodeOutputs?.images ? nodeOutputs.images : []
   const outputImageItems = outputImages.flatMap((image, index) => {
-    const previewUrl = buildViewUrl({
-      apiBase: API_BASE,
-      image,
-      preview: "webp;90",
-    })
-    if (!previewUrl) {
+    const previewUrl =
+      typeof image.previewUrl === "string" && image.previewUrl.length > 0
+        ? image.previewUrl
+        : buildViewUrl({
+            apiBase: API_BASE,
+            image,
+            preview: "webp;90",
+          })
+    const fullUrl =
+      typeof image.url === "string" && image.url.length > 0
+        ? image.url
+        : buildViewUrl({ apiBase: API_BASE, image })
+    const displayUrl = previewUrl ?? fullUrl
+    if (!displayUrl) {
       return []
     }
-    const fullUrl = buildViewUrl({ apiBase: API_BASE, image })
     const imageElement = (
       <img
-        src={previewUrl}
+        src={displayUrl}
         alt={`Output ${index + 1}`}
         className="block h-24 w-full object-contain"
         loading="lazy"
